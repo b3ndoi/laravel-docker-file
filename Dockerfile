@@ -47,7 +47,6 @@ RUN docker-php-ext-install \
     iconv \
     mbstring \
     pdo \
-    ldap \
     pdo_mysql \
     pdo_pgsql \
     pdo_sqlite \
@@ -57,7 +56,13 @@ RUN docker-php-ext-install \
     gd \
     zip \
     bcmath
-
+ # Install needed php extensions: ldap
+ 
+RUN apk update && \
+    apk add --no-cache --virtual .build-deps $PHPIZE_DEPS icu-dev openldap-dev && \
+    docker-php-ext-install ldap && \
+    apk del .build-deps && \
+    rm -rf /tmp/* /var/cache/apk/*
 # Install composer
 ENV COMPOSER_HOME /composer
 ENV PATH ./vendor/bin:/composer/vendor/bin:$PATH
